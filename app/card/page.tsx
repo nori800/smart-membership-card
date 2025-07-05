@@ -130,7 +130,7 @@ export default function MembershipCard() {
         <div className="mb-4">
           <div className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-green-200">
             <img 
-              src="/IMG_7485.jpg" 
+              src="/image.png" 
               alt="大分県音楽教会 会員証"
               className="w-full h-auto object-cover"
               style={{ aspectRatio: '1.6/1' }}
