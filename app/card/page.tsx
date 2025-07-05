@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { CreditCard, ArrowLeft, Settings } from 'lucide-react';
+import { CreditCard, ArrowLeft, Settings, LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth-supabase';
 import { MEMBER_STATUS_LABELS } from '@/lib/constants';
 
 export default function MembershipCard() {
   const router = useRouter();
-  const { user, member, isLoading } = useAuth();
+  const { user, member, isLoading, signOut } = useAuth();
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -34,6 +34,15 @@ export default function MembershipCard() {
 
   const handleEditProfile = () => {
     router.push('/profile');
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      router.push('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   const getCurrentDateTime = () => {
@@ -109,6 +118,15 @@ export default function MembershipCard() {
               >
                 <Settings className="h-3 w-3 mr-1" />
                 設定
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogout}
+                className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs px-2 py-1"
+              >
+                <LogOut className="h-3 w-3 mr-1" />
+                ログアウト
               </Button>
             </div>
             <div className="flex items-center space-x-1">

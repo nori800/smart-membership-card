@@ -6,11 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { CreditCard, ArrowLeft, User, Mail, Lock, Save, Eye, EyeOff } from 'lucide-react';
+import { CreditCard, ArrowLeft, User, Mail, Lock, Save, Eye, EyeOff, LogOut } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth-supabase';
 
 function ProfileEditContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { signOut } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -119,25 +121,45 @@ function ProfileEditContent() {
     router.push(`/card?${params.toString()}`);
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      router.push('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#FAFAFA' }}>
       {/* Header */}
       <header className="bg-white/90 backdrop-blur-sm border-b border-green-200">
         <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBack}
+                className="text-gray-700 hover:text-gray-800 hover:bg-green-100"
+              >
+                <ArrowLeft className="h-4 w-4 mr-1" />
+                会員証に戻る
+              </Button>
+              <div className="flex items-center space-x-2 ml-4">
+                <CreditCard className="h-8 w-8 text-green-700" />
+                <h1 className="text-2xl font-bold text-gray-700">会員情報変更</h1>
+              </div>
+            </div>
             <Button
               variant="ghost"
               size="sm"
-              onClick={handleBack}
-              className="text-gray-700 hover:text-gray-800 hover:bg-green-100"
+              onClick={handleLogout}
+              className="text-red-600 hover:text-red-700 hover:bg-red-50"
             >
-              <ArrowLeft className="h-4 w-4 mr-1" />
-              会員証に戻る
+              <LogOut className="h-4 w-4 mr-1" />
+              ログアウト
             </Button>
-            <div className="flex items-center space-x-2 ml-4">
-              <CreditCard className="h-8 w-8 text-green-700" />
-              <h1 className="text-2xl font-bold text-gray-700">会員情報変更</h1>
-            </div>
           </div>
         </div>
       </header>

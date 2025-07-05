@@ -1,47 +1,46 @@
-import { NextRequest, NextResponse } from 'next/server';
+// app/api/delete-users/route.ts
+import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-export async function POST(request: NextRequest) {
-  try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const emailsToDelete = [
+  'hayashida@example.com',
+  'yamada@example.com',
+  'sato@example.com',
+  'tanaka@example.com',
+  'suzuki@example.com',
+];
 
-    console.log('URL:', supabaseUrl);
-    console.log('Service Role Key exists:', !!supabaseServiceRoleKey);
-    console.log('Service Role Key length:', supabaseServiceRoleKey?.length);
+export async function POST() {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
 
-    const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
+  const deleted = [];
 
-    const { data, error } = await supabase.auth.admin.createUser({
-      email: 'test@example.com',
-      password: 'test123456',
-      email_confirm: true
-    });
+  for (const email of emailsToDelete) {
+    const { data: users, error: fetchError } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
 
-    console.log('Create user result:', { data, error });
+    if (fetchError) {
+      deleted.push({ email, success: false, error: fetchError.message });
+      continue;
+    }
 
-    return NextResponse.json({
-      url: supabaseUrl,
-      keyExists: !!supabaseServiceRoleKey,
-      keyLength: supabaseServiceRoleKey?.length,
-      result: {
-        success: !error,
-        error: error?.message,
-        user: data?.user ? {
-          id: data.user.id,
-          email: data.user.email
-        } : null
-      }
-    });
+    const target = users.users.find((user) => user.email === email);
 
-  } catch (error) {
-    console.error('Simple auth test error:', error);
-    return NextResponse.json(
-      { 
-        error: 'Server error',
-        details: error instanceof Error ? error.message : String(error)
-      },
-      { status: 500 }
-    );
+    if (!target) {
+      deleted.push({ email, success: false, error: 'User not found' });
+      continue;
+    }
+
+    const { error: deleteError } = await supabase.auth.admin.deleteUser(target.id);
+
+    if (deleteError) {
+      deleted.push({ email, success: false, error: deleteError.message });
+    } else {
+      deleted.push({ email, success: true });
+    }
   }
-} 
+
+  return NextResponse.json({ deleted });
+}

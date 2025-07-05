@@ -21,8 +21,10 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const redirectTo = searchParams.get('redirectTo') || '/card';
+  const message = searchParams.get('message');
 
   // 認証済みユーザーは会員証ページにリダイレクト
   useEffect(() => {
@@ -30,6 +32,13 @@ export default function LoginPage() {
       router.push(redirectTo);
     }
   }, [user, isLoading, router, redirectTo]);
+
+  // 登録成功メッセージの表示
+  useEffect(() => {
+    if (message === 'registration_success') {
+      setSuccessMessage('会員登録が完了しました！ログインしてください。');
+    }
+  }, [message]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,6 +107,12 @@ export default function LoginPage() {
               {error && (
                 <Alert className="border-red-200 bg-red-50">
                   <AlertDescription className="text-red-800">{error}</AlertDescription>
+                </Alert>
+              )}
+
+              {successMessage && (
+                <Alert className="border-green-200 bg-green-50">
+                  <AlertDescription className="text-green-800">{successMessage}</AlertDescription>
                 </Alert>
               )}
 
