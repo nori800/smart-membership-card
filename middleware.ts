@@ -10,7 +10,7 @@ export async function middleware(request: NextRequest) {
   const authRoutes = ['/login', '/register'];
 
   // APIルートやデバッグページは除外
-  if (pathname.startsWith('/api') || pathname.startsWith('/debug') || pathname.startsWith('/test')) {
+  if (pathname.startsWith('/api')) {
     return NextResponse.next();
   }
 

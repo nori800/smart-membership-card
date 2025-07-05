@@ -75,9 +75,9 @@ CREATE TYPE login_type AS ENUM ('web', 'mobile');
    npm run dev
    ```
 
-2. **テストページにアクセス**
-   - ブラウザで `http://localhost:3000/test` を開く
-   - 接続状況を確認
+2. **ホームページにアクセス**
+   - ブラウザで `http://localhost:3000` を開く
+   - 正常にページが表示されることを確認
 
 3. **エラーが発生した場合**
    - 環境変数が正しく設定されているか確認
@@ -121,7 +121,7 @@ npm run dev
 
 ### 3. 動作テスト
 
-1. **接続テスト** (`http://localhost:3000/test`) - Supabase接続確認
+1. **ホームページ** (`http://localhost:3000`) - サイトが正常に表示されることを確認
 2. **ホームページ** (`http://localhost:3000`) - ランディングページ
 3. **ログイン** (`/login`) - サンプル会員でテスト
 4. **会員証表示** (`/card`) - 会員情報と特典の表示確認
@@ -174,9 +174,9 @@ new row violates row-level security policy
 
 ### デバッグ方法
 
-1. **接続テストページを使用**
+1. **ホームページで動作確認**
    ```
-   http://localhost:3000/test
+   http://localhost:3000
    ```
 
 2. **ブラウザの開発者ツールでログを確認**
@@ -261,7 +261,7 @@ npm install
 npm run dev
 
 # 4. 接続テスト
-# http://localhost:3000/test にアクセス
+# http://localhost:3000 にアクセス
 ```
 
 **毎回の開発時：**

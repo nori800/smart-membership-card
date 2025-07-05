@@ -9,7 +9,7 @@ import { ERROR_MESSAGES } from '@/lib/constants';
  */
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const searchParams = request.nextUrl.searchParams;
     const status = searchParams.get('status') as 'bronze' | 'silver' | 'gold' | 'diamond';
 
     if (!status || !['bronze', 'silver', 'gold', 'diamond'].includes(status)) {

@@ -184,16 +184,7 @@ export default function LoginPage() {
           </CardContent>
         </Card>
 
-        {/* Test Account Info */}
-        <Card className="bg-white/90 backdrop-blur-sm border-green-200">
-          <CardContent className="pt-6">
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">テストアカウント</h3>
-            <div className="text-xs text-gray-600 space-y-1">
-              <p>メール: yamada@example.com</p>
-              <p>パスワード: member123</p>
-            </div>
-          </CardContent>
-        </Card>
+
       </div>
     </div>
   );
