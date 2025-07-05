@@ -1,48 +1,55 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { CreditCard, ArrowLeft, User, Mail, LogIn, Lock, AlertCircle } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/use-auth';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Music, ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { signInWithEmail } from '@/lib/auth-supabase';
+import { useAuth } from '@/hooks/use-auth-supabase';
 
-export default function Login() {
+export default function LoginPage() {
   const router = useRouter();
-  const { login, isLoading } = useAuth();
-  const [formData, setFormData] = useState({
-    identifier: '',
-    password: ''
-  });
+  const searchParams = useSearchParams();
+  const { user, isLoading } = useAuth();
+  
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Clear error when user starts typing
-    if (error) setError('');
-  };
+  const redirectTo = searchParams.get('redirectTo') || '/card';
+
+  // 認証済みユーザーは会員証ページにリダイレクト
+  useEffect(() => {
+    if (!isLoading && user) {
+      router.push(redirectTo);
+    }
+  }, [user, isLoading, router, redirectTo]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.identifier.trim() || !formData.password.trim()) {
-      setError('すべての項目を入力してください。');
-      return;
-    }
+    setIsSubmitting(true);
+    setError('');
 
-    const result = await login(formData.identifier, formData.password);
-    
-    if (result.success) {
-      router.push('/card');
-    } else {
-      setError(result.error || 'ログインに失敗しました。');
+    try {
+      const result = await signInWithEmail(email, password);
+      
+      if (result.success) {
+        // 成功時は自動的にonAuthStateChangeでリダイレクトされる
+        router.push(redirectTo);
+      } else {
+        setError(result.error || 'ログインに失敗しました');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('ログインに失敗しました');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -54,141 +61,125 @@ export default function Login() {
     router.push('/register');
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#FAFAFA' }}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-700 mx-auto mb-2"></div>
+          <p className="text-gray-700 text-sm">読み込み中...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (user) {
+    return null; // リダイレクト中
+  }
+
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#FAFAFA' }}>
-      {/* Header */}
-      <header className="bg-white/90 backdrop-blur-sm border-b border-green-200">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleBack}
-              className="text-gray-700 hover:text-gray-800 hover:bg-green-100"
-            >
-              <ArrowLeft className="h-4 w-4 mr-1" />
-              戻る
-            </Button>
-            <div className="flex items-center space-x-2 ml-4">
-              <CreditCard className="h-8 w-8 text-green-700" />
-              <h1 className="text-2xl font-bold text-gray-700">デジタル会員証</h1>
-            </div>
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ backgroundColor: '#FAFAFA' }}>
+      <div className="w-full max-w-md space-y-6">
+        {/* Header */}
+        <div className="text-center">
+          <div className="flex items-center justify-center space-x-2 mb-4">
+            <Music className="h-8 w-8 text-green-700" />
+            <h1 className="text-2xl font-bold text-gray-800">大分県音楽教会</h1>
           </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-2xl mx-auto px-4 py-12">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-700 mb-4">
-            ログイン
-          </h2>
-          <p className="text-gray-600">
-            会員番号またはメールアドレスとパスワードを入力してください。
-          </p>
+          <p className="text-gray-600">スマート会員証システム</p>
         </div>
 
-        <Card className="bg-white/90 backdrop-blur-sm border-green-200 shadow-xl">
-          <CardHeader className="text-center pb-6">
-            <CardTitle className="text-2xl text-gray-700 flex items-center justify-center">
-              <LogIn className="h-6 w-6 mr-2" />
-              会員ログイン
-            </CardTitle>
+        {/* Login Form */}
+        <Card className="bg-white/90 backdrop-blur-sm border-green-200">
+          <CardHeader>
+            <CardTitle className="text-xl text-center text-gray-700">ログイン</CardTitle>
           </CardHeader>
           <CardContent>
-            {error && (
-              <Alert className="mb-6 border-red-200 bg-red-50">
-                <AlertCircle className="h-4 w-4 text-red-600" />
-                <AlertDescription className="text-red-700">
-                  {error}
-                </AlertDescription>
-              </Alert>
-            )}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <Alert className="border-red-200 bg-red-50">
+                  <AlertDescription className="text-red-800">{error}</AlertDescription>
+                </Alert>
+              )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Identifier Input */}
               <div className="space-y-2">
-                <Label htmlFor="identifier" className="text-gray-700 font-medium flex items-center">
-                  <User className="h-4 w-4 mr-2" />
-                  会員番号またはメールアドレス
-                </Label>
+                <Label htmlFor="email" className="text-gray-700">メールアドレス</Label>
                 <Input
-                  id="identifier"
-                  name="identifier"
-                  type="text"
-                  value={formData.identifier}
-                  onChange={handleInputChange}
-                  placeholder="M-2024-0001 または yamada@example.com"
-                  className="w-full px-4 py-3 text-lg border-green-200 focus:border-green-500 focus:ring-green-500 rounded-lg"
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="例: yamada@example.com"
                   required
+                  className="border-green-200 focus:border-green-500"
                 />
               </div>
 
-              {/* Password Input */}
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-gray-700 font-medium flex items-center">
-                  <Lock className="h-4 w-4 mr-2" />
-                  パスワード
-                </Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  placeholder="パスワードを入力してください"
-                  className="w-full px-4 py-3 text-lg border-green-200 focus:border-green-500 focus:ring-green-500 rounded-lg"
-                  required
-                />
+                <Label htmlFor="password" className="text-gray-700">パスワード</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="パスワードを入力"
+                    required
+                    className="border-green-200 focus:border-green-500 pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
 
-              {/* Submit Button */}
               <Button
                 type="submit"
-                disabled={isLoading}
-                className="w-full bg-green-700 hover:bg-green-800 text-white py-4 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                disabled={isSubmitting}
+                className="w-full bg-green-700 hover:bg-green-800 text-white"
               >
-                {isLoading ? (
-                  <span className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    ログイン中...
-                  </span>
-                ) : (
-                  '会員証を表示'
-                )}
+                {isSubmitting ? 'ログイン中...' : 'ログイン'}
               </Button>
             </form>
 
-            {/* Register Link */}
-            <div className="mt-6 text-center">
-              <p className="text-gray-600 text-sm mb-3">
-                まだ会員登録がお済みでない方は
-              </p>
-              <Button
-                variant="outline"
-                onClick={handleRegister}
-                className="border-green-300 text-gray-700 hover:bg-green-50"
-              >
-                新規会員登録はこちら
-              </Button>
+            <div className="mt-6 space-y-3">
+              <div className="text-center">
+                <button
+                  onClick={handleRegister}
+                  className="text-green-700 hover:text-green-800 text-sm font-medium underline"
+                >
+                  新規会員登録はこちら
+                </button>
+              </div>
+              
+              <div className="text-center">
+                <Button
+                  variant="ghost"
+                  onClick={handleBack}
+                  className="text-gray-600 hover:text-gray-800 text-sm"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-1" />
+                  ホームに戻る
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Info Section */}
-        <div className="mt-8 text-center">
-          <div className="bg-white/90 backdrop-blur-sm rounded-lg p-6 border border-green-200">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">
-              ログインについて
-            </h3>
-            <p className="text-gray-600 text-sm leading-relaxed">
-              会員登録時に発行された会員番号またはメールアドレスと、
-              設定されたパスワードを入力してください。
-              ログイン後、デジタル会員証が表示されます。
-            </p>
-          </div>
-        </div>
-      </main>
+        {/* Test Account Info */}
+        <Card className="bg-white/90 backdrop-blur-sm border-green-200">
+          <CardContent className="pt-6">
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">テストアカウント</h3>
+            <div className="text-xs text-gray-600 space-y-1">
+              <p>メール: yamada@example.com</p>
+              <p>パスワード: member123</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -5,18 +5,18 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { CreditCard, ArrowLeft, Settings } from 'lucide-react';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/use-auth-supabase';
 import { MEMBER_STATUS_LABELS } from '@/lib/constants';
 
 export default function MembershipCard() {
   const router = useRouter();
-  const { member, isLoading } = useAuth();
+  const { user, member, isLoading } = useAuth();
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
     // 未ログインの場合はログインページにリダイレクト
-    if (!isLoading && !member) {
-      router.push('/login');
+    if (!isLoading && !user) {
+      router.push('/login?redirectTo=/card');
       return;
     }
 
@@ -26,7 +26,7 @@ export default function MembershipCard() {
     }, 60000);
 
     return () => clearInterval(timer);
-  }, [member, isLoading, router]);
+  }, [user, isLoading, router]);
 
   const handleBack = () => {
     router.push('/');
@@ -81,7 +81,7 @@ export default function MembershipCard() {
     );
   }
 
-  if (!member) {
+  if (!user || !member) {
     return null; // リダイレクト中
   }
 

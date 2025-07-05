@@ -173,4 +173,10 @@ export interface Database {
       [_ in never]: never
     }
   }
-} 
+}
+
+// 型エイリアスをエクスポート
+export type Member = Database['public']['Tables']['members']['Row'];
+export type Admin = Database['public']['Tables']['admins']['Row'];
+export type MemberBenefit = Database['public']['Tables']['member_benefits']['Row'];
+export type LoginLog = Database['public']['Tables']['login_logs']['Row']; 
