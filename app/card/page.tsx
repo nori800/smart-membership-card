@@ -191,7 +191,8 @@ export default function MembershipCard() {
           </div>
         </div>
 
-        {/* Instructions */}
+        {/* Instructions - 一時的に非表示 */}
+        {/* 
         <Card className="bg-white/90 backdrop-blur-sm border-green-200 mb-3">
           <CardContent className="p-3">
             <p className="text-xs text-gray-600 leading-relaxed mb-2">
@@ -205,6 +206,7 @@ export default function MembershipCard() {
             </Button>
           </CardContent>
         </Card>
+        */}
 
         {/* Notice for Staff */}
         <Card className="bg-white/90 backdrop-blur-sm border-green-200">
