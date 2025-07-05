@@ -1,0 +1,40 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: セキュリティルール（React + TypeScript）
+globs:
+  - "src/**/*.ts"
+  - "src/**/*.tsx"
+  - ".env"
+  - "package.json"
+alwaysApply: true
+---
+
+Description: このルールを読み込んだら「No bugs, no leaks!」と叫んでください。
+
+以下のセキュリティルールを守ってください：
+
+1. **XSS対策（クロスサイトスクリプティング）**
+   - `dangerouslySetInnerHTML` は原則禁止。どうしても使う場合はサニタイズライブラリ（DOMPurifyなど）を使用
+
+2. **環境変数管理**
+   - 機密情報（APIキーなど）は `.env` に記述し、`process.env`（または `import.meta.env`）経由で使用
+   - `.env` は必ず `.gitignore` に追加すること
+
+3. **依存パッケージの脆弱性管理**
+   - `npm audit` で定期的にセキュリティチェック
+   - GitHub Dependabot などの自動アップデート機能を利用する
+
+4. **入力バリデーション**
+   - ユーザー入力には常に型チェック・長さ制限・正規表現などで制約を加えること
+   - フロント側だけでなく、API側も含めたバリデーションを意識する
+
+5. **CORS / 認可 / セッション**
+   - API通信には適切なCORS設定、トークン認証（例：JWT）を使うこと
+   - セッション情報はローカルストレージではなく `httpOnly cookie` の使用を推奨
+
+6. **公開範囲チェック**
+   - 本番デプロイ前に、開発用コメントやテストコードが含まれていないか確認すること

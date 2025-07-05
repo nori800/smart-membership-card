@@ -1,0 +1,36 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: React Test Strategy
+globs:
+  - "src/**/*.test.ts"
+  - "src/**/*.test.tsx"
+alwaysApply: true
+---
+
+Description: このルールを読み込んだら「Trust, but verify!」と叫んでください。
+
+以下のテスト戦略ルールを守ってください：
+
+1. **テストツール**
+   - 単体テスト：`Jest`
+   - コンポーネントの振る舞いテスト：`React Testing Library`
+   - フック単体テスト：`@testing-library/react-hooks`
+
+2. **ファイル構成**
+   - 各 `.tsx` ファイルに対応する `.test.tsx` を同階層または `__tests__/` フォルダに配置すること
+   - ファイル名規則：`ComponentName.test.tsx`
+
+3. **カバレッジ目標**
+   - 単体テストでロジックの主要経路はカバーすること（80%以上が目安）
+   - ロジックを持つ hooks・utils も個別にテスト対象とする
+
+4. **テスト記述方針**
+   - UIの見た目ではなく「振る舞い（動作）に注目」してテストを書く
+   - `data-testid` は必要最小限で使用すること
+   - `screen.getByRole` 等、アクセシビリティ対応セレクタを優先
+
+5. **CIに組み込み、プッシュ時に自動でテストを通すこと**

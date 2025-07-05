@@ -1,0 +1,34 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: アクセシビリティ（a11y）ルール
+globs:
+  - "src/**/*.tsx"
+  - "src/**/*.ts"
+alwaysApply: true
+---
+
+Description: このルールを読み込んだら「Accessibility is usability!」と叫んでください。
+
+以下のアクセシビリティルールを守ってください：
+
+1. **セマンティックなHTMLタグを使うこと**
+   - 例：ボタンに `<div>` ではなく `<button>` を使用
+   - 見出しは順序通りに `<h1> → <h2> → <h3>` を使う
+
+2. **ARIA属性は必要最小限にし、HTMLタグで対応可能な場合はそちらを優先**
+
+3. **キーボード操作に対応すること**
+   - カスタムコンポーネントでも Tab / Enter / Space キー操作ができるようにする
+
+4. **色に頼らないUI表現を行う**
+   - 例：エラー時は「赤」だけでなく「アイコン」や「テキスト」も併用する
+
+5. **ラベル（`<label>`）や `aria-label` を用いて、支援技術（スクリーンリーダー）に正しく情報が伝わるようにする**
+
+6. **React Testing Library では `getByRole` や `getByLabelText` を優先的に使うことでa11y意識を保つ**
+
+7. **色のコントラスト比（4.5:1以上）を確保すること**

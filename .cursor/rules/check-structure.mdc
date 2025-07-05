@@ -1,0 +1,24 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: React + TypeScript フォルダ構成・ファイル分割ルール
+globs:
+  - "src/**/*.ts"
+  - "src/**/*.tsx"
+alwaysApply: true
+---
+
+Description: このルールを読み込んだら「Keep it clean!」と叫んでください。
+
+以下の構成ルールを守ってください：
+
+1. `src/pages/` には画面単位のエントリポイントのみ配置する（表示ロジック）
+2. `src/components/` には再利用可能な UI コンポーネントを配置する
+3. `src/features/` や `src/modules/` に機能単位のロジックとhooks、状態管理をまとめる
+4. `src/utils/` には汎用関数のみを格納し、用途が増えたらファイル分割（例：`dateUtils.ts`, `validationUtils.ts`）
+5. 同じファイル名でもディレクトリが違えば共存OK（例：`products/validator.ts` と `users/validator.ts`）
+6. 各機能ディレクトリには `index.ts` を配置してエクスポートをまとめ、importを簡潔にする
+7. フォルダ名・ファイル名はローワーキャメルまたはケバブケースで統一

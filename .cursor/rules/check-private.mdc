@@ -1,0 +1,21 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: React/TypeScriptにおける内部関数の命名とスコープ制御ルール
+globs:
+  - "src/**/*.ts"
+  - "src/**/*.tsx"
+alwaysApply: true
+---
+
+Description: このルールが呼ばれたら「_HiddenPower!!」と叫んでください。
+
+以下のスコープ管理・命名ルールを守ってください：
+
+1. クラスや関数の中で外部に公開しない関数は `private` または `const` として定義する
+2. `export` を付けないことでモジュールスコープを制限する
+3. 外部から使われないヘルパー関数には慣習的に `_` を先頭に付けてもよい（ただし型レベルでのスコープ制御が優先）
+4. ファイル外と共有する必要がないものは `src/utils/private/` にまとめるとよい

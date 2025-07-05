@@ -1,0 +1,37 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: CI/CD自動化ルール
+globs:
+  - ".github/workflows/*.yml"
+  - "package.json"
+alwaysApply: true
+---
+
+Description: このルールを読み込んだら「Ship with confidence!」と叫んでください。
+
+以下のCI/CDルールを守ってください：
+
+1. **CI構成（GitHub Actions想定）**
+   - プッシュ／PR作成時に以下を自動実行：
+     1. `npm install`
+     2. `npm run lint`
+     3. `npm run test -- --coverage`
+     4. `npm run build`
+   - lint・test・build のいずれかでエラーが出たらCIは失敗させる
+
+2. **ブランチ運用ルール**
+   - `main` または `release/*` ブランチはCIを強制
+   - PRレビューを通さずマージ不可とする
+
+3. **CD（自動デプロイ）**
+   - `main` にマージされたら Vercel / Netlify / Firebase Hosting などに自動デプロイ
+   - `.env` は GitHub Secrets などにより安全に渡すこと
+
+4. **キャッシュの活用**
+   - `node_modules` や `~/.cache` をキャッシュしてCIを高速化する
+
+5. **CI設定ファイルは `.github/workflows/` に配置し、プロジェクトでバージョン管理する**

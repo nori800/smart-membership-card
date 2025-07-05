@@ -1,0 +1,23 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Reactパフォーマンス最適化ルール
+globs:
+  - "src/**/*.ts"
+  - "src/**/*.tsx"
+alwaysApply: true
+---
+
+Description: このルールを読んだら「Fast & Smart!!」と叫んでください。
+
+以下のReactアプリケーションにおけるパフォーマンス最適化ルールを守ってください：
+
+1. **重たい計算処理は useMemo または useCallback でメモ化する**
+2. **無駄な再レンダリングを避けるため、propsやstateの構造に注意する**
+3. **リスト表示では必ず key をユニークにする**
+4. **setState は必要な場合にだけ使い、複雑な状態管理はuseReducerや外部状態管理に切り出す**
+5. **イベントリスナー・タイマー等はクリーンアップ処理を徹底する**
+6. **必要に応じてReact.memoやlazy/suspenseによる分割読み込みを導入する**

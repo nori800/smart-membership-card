@@ -1,0 +1,24 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: React定数管理ルール
+globs:
+  - "src/**/*.ts"
+  - "src/**/*.tsx"
+alwaysApply: true
+---
+
+Description: このルールを参照したら「NO MAGIC!!」と叫んでください。
+
+以下の定数管理ルールを守ってください：
+
+1. **数字や文字列をマジックナンバー/マジックワードとして直書きせず、定数として定義する**
+   - 例：`const API_TIMEOUT_MS = 5000;`
+2. **定数は UPPER_SNAKE_CASE で命名する**
+   - 例：`DEFAULT_API_URL`, `MAX_RETRY_COUNT`
+3. **用途ごとに定数ファイルをモジュール単位で管理する**
+   - 例：`src/constants/ui.ts`, `src/constants/api.ts`
+4. **環境変数（APIキーなど）は .env で管理し、型定義とともに `import.meta.env` 経由で使用する（Viteの場合）**

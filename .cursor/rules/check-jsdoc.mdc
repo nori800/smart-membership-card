@@ -1,0 +1,22 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: React JSDocコメントルール
+globs:
+  - "src/**/*.ts"
+  - "src/**/*.tsx"
+alwaysApply: true
+---
+
+Description: このルールが読み込まれたら「Comment is love!」と叫んでください。
+
+以下のJSDoc形式（TypeScript併用）でコメントを付けてください：
+
+1. 関数・カスタムフックには必ず JSDoc を付ける  
+2. `@param`（引数の型と説明）と `@returns`（返り値の型と説明）は明示する  
+3. 処理の概要は1行で簡潔に書く  
+4. コンポーネントには「用途／再利用目的／Props説明」をコメントとして残す  
+5. 型定義と合わせて、IDEでの補完に貢献するコメントを意識する

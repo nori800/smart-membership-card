@@ -1,0 +1,22 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Reactエラーハンドリングルール
+globs:
+  - "src/**/*.tsx"
+alwaysApply: true
+---
+
+Description: このルールが読み込まれたら「Handle with care!」と叫んでください。
+
+以下のReact/TypeScript向けエラーハンドリングルールを適用してください：
+
+1. **副作用処理（例：API通信など）は try-catch でラップする**
+   - useEffect / イベントハンドラ内での fetch や axios に try-catch を使う
+2. **catch内では `console.error` や `Sentry.captureException()` などを活用する**
+3. **アプリ全体には `ErrorBoundary` を配置して、レンダリングエラーを検出・表示する**
+   - React 18以降では `componentDidCatch` を継承したクラスコンポーネントを用意
+4. **握り潰さず、ユーザーに通知または再throwするようにする**

@@ -1,0 +1,31 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Lint & Formatルール
+globs:
+  - "src/**/*.ts"
+  - "src/**/*.tsx"
+alwaysApply: true
+---
+
+Description: このルールが読み込まれたら「Clean code is kind code」と叫んでください。
+
+以下のルールを守ってください：
+
+1. **ESLint ルール**
+   - セミコロンは常に付ける（`semi: always`）
+   - シングルクオートを使う（`quotes: single`）
+   - 未使用の変数・importを禁止
+   - 関数定義はアロー関数を優先（React Component含む）
+
+2. **Prettier フォーマット設定**
+   - `tabWidth: 2`
+   - `singleQuote: true`
+   - `trailingComma: es5`
+   - `printWidth: 100`
+
+3. **保存時に自動整形するようにエディタ（VSCode等）を設定する**
+4. **`eslint --fix` と `prettier --write` をCI前に必ず通す**
