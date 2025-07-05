@@ -1,52 +1,43 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { CreditCard, ArrowLeft, Settings } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { MEMBER_STATUS_LABELS } from '@/lib/constants';
 
-function MembershipCardContent() {
-  const searchParams = useSearchParams();
+export default function MembershipCard() {
   const router = useRouter();
-  const [memberData, setMemberData] = useState({
-    name: '',
-    email: '',
-    memberNumber: 'M-2025-0001',
-    expirationDate: '2026年3月31日'
-  });
+  const { member, isLoading } = useAuth();
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
-    const name = searchParams.get('name');
-    const email = searchParams.get('email');
-    
-    if (!name || !email) {
-      router.push('/register');
+    // 未ログインの場合はログインページにリダイレクト
+    if (!isLoading && !member) {
+      router.push('/login');
       return;
     }
 
-    setMemberData(prev => ({
-      ...prev,
-      name: name,
-      email: email
-    }));
-  }, [searchParams, router]);
+    // 現在時刻を1分ごとに更新
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+
+    return () => clearInterval(timer);
+  }, [member, isLoading, router]);
 
   const handleBack = () => {
     router.push('/');
   };
 
   const handleEditProfile = () => {
-    const params = new URLSearchParams({
-      name: memberData.name,
-      email: memberData.email
-    });
-    router.push(`/profile?${params.toString()}`);
+    router.push('/profile');
   };
 
   const getCurrentDateTime = () => {
-    const now = new Date();
-    return now.toLocaleDateString('ja-JP', {
+    return currentTime.toLocaleDateString('ja-JP', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -54,6 +45,45 @@ function MembershipCardContent() {
       minute: '2-digit'
     }).replace(/\//g, '/') + '時点';
   };
+
+  const formatExpirationDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'diamond':
+        return 'text-purple-600';
+      case 'gold':
+        return 'text-yellow-600';
+      case 'silver':
+        return 'text-gray-600';
+      case 'bronze':
+        return 'text-amber-600';
+      default:
+        return 'text-gray-600';
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#FAFAFA' }}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-700 mx-auto mb-2"></div>
+          <p className="text-gray-700 text-sm">会員証を読み込み中...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!member) {
+    return null; // リダイレクト中
+  }
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#FAFAFA' }}>
@@ -113,22 +143,28 @@ function MembershipCardContent() {
           <div className="space-y-2 text-sm">
             <div className="text-right">
               <span className="text-gray-600 font-bold">有効期限 </span>
-              <span className="text-gray-600 font-bold text-lg">{memberData.expirationDate}</span>
+              <span className="text-gray-600 font-bold text-lg">
+                {formatExpirationDate(member.expiration_date)}
+              </span>
             </div>
             <div className="text-right">
               <span className="text-gray-600 font-bold">会員ID </span>
-              <span className="text-gray-600 font-bold font-mono text-lg">{memberData.memberNumber}</span>
+              <span className="text-gray-600 font-bold font-mono text-lg">
+                {member.member_number}
+              </span>
             </div>
             <div>
               <div className="flex">
                 <span className="text-gray-600 font-medium w-16">氏名</span>
-                <span className="text-gray-600">{memberData.name}</span>
+                <span className="text-gray-600">{member.name}</span>
               </div>
             </div>
             <div>
               <div className="flex">
                 <span className="text-gray-600 font-medium w-16">会員種別</span>
-                <span className="text-gray-600">ダイヤモンド</span>
+                <span className={`font-semibold ${getStatusColor(member.status)}`}>
+                  {MEMBER_STATUS_LABELS[member.status as keyof typeof MEMBER_STATUS_LABELS]}
+                </span>
               </div>
             </div>
             <div className="text-right">
@@ -171,20 +207,5 @@ function MembershipCardContent() {
         </div>
       </main>
     </div>
-  );
-}
-
-export default function MembershipCard() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#FAFAFA' }}>
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-700 mx-auto mb-2"></div>
-          <p className="text-gray-700 text-sm">会員証を読み込み中...</p>
-        </div>
-      </div>
-    }>
-      <MembershipCardContent />
-    </Suspense>
   );
 }

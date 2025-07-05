@@ -5,16 +5,19 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { CreditCard, ArrowLeft, User, Mail, LogIn } from 'lucide-react';
+import { CreditCard, ArrowLeft, User, Mail, LogIn, Lock, AlertCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/use-auth';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function Login() {
   const router = useRouter();
+  const { login, isLoading } = useAuth();
   const [formData, setFormData] = useState({
-    name: '',
-    email: ''
+    identifier: '',
+    password: ''
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -22,28 +25,25 @@ export default function Login() {
       ...prev,
       [name]: value
     }));
+    // Clear error when user starts typing
+    if (error) setError('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name.trim() || !formData.email.trim()) {
-      alert('すべての項目を入力してください。');
+    if (!formData.identifier.trim() || !formData.password.trim()) {
+      setError('すべての項目を入力してください。');
       return;
     }
 
-    setIsSubmitting(true);
+    const result = await login(formData.identifier, formData.password);
     
-    // Simulate authentication process
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Navigate to card page with user data
-    const params = new URLSearchParams({
-      name: formData.name,
-      email: formData.email
-    });
-    
-    router.push(`/card?${params.toString()}`);
+    if (result.success) {
+      router.push('/card');
+    } else {
+      setError(result.error || 'ログインに失敗しました。');
+    }
   };
 
   const handleBack = () => {
@@ -84,7 +84,7 @@ export default function Login() {
             ログイン
           </h2>
           <p className="text-gray-600">
-            会員情報を入力して、デジタル会員証を表示してください。
+            会員番号またはメールアドレスとパスワードを入力してください。
           </p>
         </div>
 
@@ -96,38 +96,47 @@ export default function Login() {
             </CardTitle>
           </CardHeader>
           <CardContent>
+            {error && (
+              <Alert className="mb-6 border-red-200 bg-red-50">
+                <AlertCircle className="h-4 w-4 text-red-600" />
+                <AlertDescription className="text-red-700">
+                  {error}
+                </AlertDescription>
+              </Alert>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Name Input */}
+              {/* Identifier Input */}
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-gray-700 font-medium flex items-center">
+                <Label htmlFor="identifier" className="text-gray-700 font-medium flex items-center">
                   <User className="h-4 w-4 mr-2" />
-                  お名前
+                  会員番号またはメールアドレス
                 </Label>
                 <Input
-                  id="name"
-                  name="name"
+                  id="identifier"
+                  name="identifier"
                   type="text"
-                  value={formData.name}
+                  value={formData.identifier}
                   onChange={handleInputChange}
-                  placeholder="山田 太郎"
+                  placeholder="M-2024-0001 または yamada@example.com"
                   className="w-full px-4 py-3 text-lg border-green-200 focus:border-green-500 focus:ring-green-500 rounded-lg"
                   required
                 />
               </div>
 
-              {/* Email Input */}
+              {/* Password Input */}
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-gray-700 font-medium flex items-center">
-                  <Mail className="h-4 w-4 mr-2" />
-                  メールアドレス
+                <Label htmlFor="password" className="text-gray-700 font-medium flex items-center">
+                  <Lock className="h-4 w-4 mr-2" />
+                  パスワード
                 </Label>
                 <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={formData.password}
                   onChange={handleInputChange}
-                  placeholder="yamada@example.com"
+                  placeholder="パスワードを入力してください"
                   className="w-full px-4 py-3 text-lg border-green-200 focus:border-green-500 focus:ring-green-500 rounded-lg"
                   required
                 />
@@ -136,10 +145,10 @@ export default function Login() {
               {/* Submit Button */}
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isLoading}
                 className="w-full bg-green-700 hover:bg-green-800 text-white py-4 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
-                {isSubmitting ? (
+                {isLoading ? (
                   <span className="flex items-center justify-center">
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                     ログイン中...
@@ -173,7 +182,8 @@ export default function Login() {
               ログインについて
             </h3>
             <p className="text-gray-600 text-sm leading-relaxed">
-              会員登録時に入力されたお名前とメールアドレスを入力してください。
+              会員登録時に発行された会員番号またはメールアドレスと、
+              設定されたパスワードを入力してください。
               ログイン後、デジタル会員証が表示されます。
             </p>
           </div>
