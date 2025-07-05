@@ -2,11 +2,23 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 
+// APIルートを動的レンダリングに強制
+export const dynamic = 'force-dynamic';
+
 /**
  * Supabase認証ユーザーを作成し、既存のmembersテーブルと紐付ける
+ * 開発・テスト環境でのみ使用可能
  */
 export async function POST(request: NextRequest) {
   try {
+    // 本番環境では使用禁止
+    if (process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production') {
+      return NextResponse.json(
+        { error: 'This API is not available in production environment' },
+        { status: 403 }
+      );
+    }
+
     console.log('=== Create Auth User API Called ===');
     
     const body = await request.json();

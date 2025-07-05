@@ -3,6 +3,9 @@ import { loginMember } from '@/lib/auth';
 import { memberLoginSchema } from '@/lib/validations';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/lib/constants';
 
+// APIルートを動的レンダリングに強制
+export const dynamic = 'force-dynamic';
+
 /**
  * 会員ログインAPI
  * @param request - リクエストオブジェクト

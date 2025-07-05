@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { supabase } from '@/lib/supabase';
 
+// APIルートを動的レンダリングに強制
+export const dynamic = 'force-dynamic';
+
 /**
  * 新規会員登録API
  * 1. Supabase Authにユーザーを作成

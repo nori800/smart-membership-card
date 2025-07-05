@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getMemberBenefits } from '@/lib/auth';
 import { ERROR_MESSAGES } from '@/lib/constants';
 
+// APIルートを動的レンダリングに強制
+export const dynamic = 'force-dynamic';
+
 /**
  * 会員特典取得API
  * @param request - リクエストオブジェクト

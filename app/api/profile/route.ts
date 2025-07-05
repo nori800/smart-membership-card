@@ -3,6 +3,9 @@ import { getMember, updateMember, verifyPassword, hashPassword } from '@/lib/aut
 import { memberUpdateSchema } from '@/lib/validations';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/lib/constants';
 
+// APIルートを動的レンダリングに強制
+export const dynamic = 'force-dynamic';
+
 /**
  * 会員情報取得API
  * @param request - リクエストオブジェクト
