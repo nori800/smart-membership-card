@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Switch } from '@/components/ui/switch';
 import { 
   CreditCard, 
   ArrowLeft, 
@@ -18,9 +17,7 @@ import {
   Eye, 
   EyeOff, 
   LogOut,
-  Settings as SettingsIcon,
-  Bell,
-  Smartphone
+  Settings as SettingsIcon
 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth-supabase';
 
@@ -38,11 +35,11 @@ export default function SettingsPage() {
     newPassword: '',
     confirmPassword: ''
   });
-  const [settings, setSettings] = useState({
-    notifications: true,
-    autoSave: true,
-    darkMode: false
-  });
+  // const [settings, setSettings] = useState({
+  //   notifications: true,
+  //   autoSave: true,
+  //   darkMode: false
+  // });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -98,12 +95,12 @@ export default function SettingsPage() {
    * @param {string} key - 設定キー
    * @param {boolean} value - 設定値
    */
-  const handleSettingChange = (key: string, value: boolean) => {
-    setSettings(prev => ({
-      ...prev,
-      [key]: value
-    }));
-  };
+  // const handleSettingChange = (key: string, value: boolean) => {
+  //   setSettings(prev => ({
+  //     ...prev,
+  //     [key]: value
+  //   }));
+  // };
 
   /**
    * フォームのバリデーション
@@ -281,9 +278,8 @@ export default function SettingsPage() {
           </div>
         )}
 
-        <div className="space-y-6">
-          {/* 会員情報 */}
-          <Card className="bg-white/90 backdrop-blur-sm border-green-200 shadow-xl">
+        {/* 会員情報 */}
+        <Card className="bg-white/90 backdrop-blur-sm border-green-200 shadow-xl mb-8">
             <CardHeader className="pb-4">
               <CardTitle className="text-xl text-gray-700 flex items-center">
                 <User className="h-5 w-5 mr-2" />
@@ -462,7 +458,8 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
-          {/* アプリ設定 */}
+          {/* アプリ設定 - 一時的に非表示 */}
+          {/* 
           <Card className="bg-white/90 backdrop-blur-sm border-green-200 shadow-xl">
             <CardHeader className="pb-4">
               <CardTitle className="text-xl text-gray-700 flex items-center">
@@ -471,7 +468,6 @@ export default function SettingsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* 通知設定 */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <Bell className="h-4 w-4 text-gray-600" />
@@ -486,7 +482,6 @@ export default function SettingsPage() {
                 />
               </div>
 
-              {/* オートセーブ設定 */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <Save className="h-4 w-4 text-gray-600" />
@@ -500,10 +495,10 @@ export default function SettingsPage() {
                   onCheckedChange={(checked) => handleSettingChange('autoSave', checked)}
                 />
               </div>
-            </CardContent>
+                        </CardContent>
           </Card>
-        </div>
-      </main>
-    </div>
-  );
-} 
+          */}
+        </main>
+      </div>
+    );
+  } 
