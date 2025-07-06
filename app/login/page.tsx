@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,7 +11,8 @@ import { Music, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { signInWithEmail } from '@/lib/auth-supabase';
 import { useAuth } from '@/hooks/use-auth-supabase';
 
-export default function LoginPage() {
+// SearchParamsを使用するコンポーネントを分離
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isLoading } = useAuth();
@@ -187,5 +188,23 @@ export default function LoginPage() {
 
       </div>
     </div>
+  );
+}
+
+// メインコンポーネント - SuspenseでLoginContentをラップ
+export default function LoginPage() {
+  return (
+    <Suspense 
+      fallback={
+        <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#FAFAFA' }}>
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-700 mx-auto mb-2"></div>
+            <p className="text-gray-700 text-sm">読み込み中...</p>
+          </div>
+        </div>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   );
 }
