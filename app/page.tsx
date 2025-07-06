@@ -4,12 +4,33 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { CreditCard, Users, Gift, Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
   const router = useRouter();
+  const [isRouterReady, setIsRouterReady] = useState(false);
+
+  useEffect(() => {
+    // Routerが準備完了したことを確認
+    if (router) {
+      setIsRouterReady(true);
+    }
+  }, [router]);
 
   const handleLogin = () => {
-    router.push('/login');
+    if (!isRouterReady) {
+      // フォールバック: window.locationを使用
+      window.location.href = '/login';
+      return;
+    }
+    
+    try {
+      router.push('/login');
+    } catch (error) {
+      console.error('Navigation error:', error);
+      // エラー時のフォールバック
+      window.location.href = '/login';
+    }
   };
 
   const handleRegister = () => {
