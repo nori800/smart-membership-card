@@ -33,7 +33,14 @@ export default function MembershipCard() {
   };
 
   const handleEditProfile = () => {
-    router.push('/profile');
+    // 設定ページへのナビゲーション（フォールバック付き）
+    try {
+      router.push('/settings');
+    } catch (error) {
+      console.error('Router navigation error:', error);
+      // フォールバック: 直接URLを変更
+      window.location.href = '/settings';
+    }
   };
 
   const handleLogout = async () => {
